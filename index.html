@@ -514,7 +514,6 @@ figure img{cursor:zoom-in}
             <p>The string as received on the machine on Nov 16, 2026, for a GP card:</p>
             <pre class="expr">1,GP,64,b1,b2,b3,b4,b5,b6,b7,b8,n1,n2,n3,n4,n5,n6,n7,n8,(machine name)</pre>
             <p class="note"><b>Byte is the row, bit is the column.</b> To place one well, the row picks the byte and the column picks the bit value: 128 for Column1 down to 1 for Column8. Well 27 is Column4, Wellx3, so it is 16 in byte 3, which is field 6. Two filled wells in the same row add: Column1 and Column4 in row 3 make byte 3 equal 144.</p>
-            <p class="verify"><b>A string that was wrong.</b> On Nov 15, 2026 a string named Well-53 arrived from (PLC address) with 8 in byte 7. That is Column5, Wellx7, which is well 39. Well 53 is Column7, Wellx5: 2 in byte 5. The row and column were swapped in that string. Where it was built has not been traced.</p>
           </div>
 
           <p class="note">This is the second place the project can wait at startup. If the device has connected but has not sent a string, the flowchart stays here and the camera loop does not start.</p>
