@@ -2138,6 +2138,7 @@ Y: Flowcharts("ColumnC").Variables.WellxW_ROI_Y-5</pre>
   var cnt=document.getElementById('deckcnt'), ttl=document.getElementById('deckttl'), pv=document.getElementById('deckprev'), nx=document.getElementById('decknext'), dots=document.getElementById('deckdots');
   var base=im.getAttribute('src').replace(/intro-\d+\.jpg.*$/,'');
   var SRC=[]; for(var k=0;k<N;k++){ SRC.push(base+'intro-'+('0'+(k+1)).slice(-2)+'.jpg'); }
+  SRC[0]=im.src;
   var pre=document.querySelectorAll('img[data-deck]'); for(var q=0;q<pre.length;q++){ SRC[+pre[q].getAttribute('data-deck')]=pre[q].src; }
   for(var d=0;d<N;d++){ (function(d){ var b=document.createElement('button'); b.type='button'; b.textContent=d+1; b.setAttribute('aria-label','Slide '+(d+1)+': '+T[d]); b.addEventListener('click',function(){ go(d); }); dots.appendChild(b); })(d); }
   function go(n){ i=Math.max(0,Math.min(N-1,n)); im.src=SRC[i]; im.alt='Slide '+(i+1)+' of '+N+': '+T[i]; cnt.textContent=(i+1)+' of '+N; ttl.textContent=T[i]; pv.disabled=i===0; nx.disabled=i===N-1;
