@@ -1938,8 +1938,8 @@ Y: Flowcharts("ColumnC").Variables.WellxW_ROI_Y-5</pre>
    {tag:'STOR',n:'Wellxn_Stats',d:'The numbers for each well are saved. Wellxn_Area is the bright pixel count plus the two calibration values. Wellxn_Stats holds the statistic chosen on the Operator View: fail count, fail percentage, or pixel count. This step does not change pass or fail.'},
    {tag:'STA',n:'StatusColx to StatusOverall',d:'Each column rolls its eight well results and its through-hole checks into one column result, and StatusOverall rolls the eight columns into one pass or fail for the card. Each StatusColx is made of the seven Colx_thruHoles conditions (six holes found, each hole size in limits), Colx_WellCLs, and the eight Wellxn_Results. StatusOverall also includes the eight DVT status steps and Optical_Interrupts. The card passes only when every one passes.'},
    {tag:'VIEW',n:'Operator View',d:'What the operator sees. A well that passed is green and a well that failed is red. E-> or F-> beside each well is what the string expects. The number above each well is the statistic chosen in the Display list. The panel under the card follows the Operator View as rearranged on Nov 16, 2026: the banner shows the card result, Total pass and Total fail are counted in DA, Total Reject % is fails divided by all cards, and RESET COUNTS clears the totals. The strip under the totals is the filmstrip: it keeps failed cards only, the last 20, and shows 10. In Production mode each string you send counts as one card. STOP JOB takes the animation back to its first step and default settings.'}];
-  var st=0,t=0,playing=false,last=0,hold=0;
-  S.forEach(function(x,i){ var b=document.createElement('button'); b.type='button'; b.innerHTML='<span class="tg2"></span><span></span>'; b.firstChild.textContent=x.tag; b.lastChild.textContent=(i+1)+'. '+x.n; b.addEventListener('click',function(){ playing=false; set(i,reduce?1:0); if(!reduce){playing=true;} sync(); }); box.appendChild(b); });
+  var st=0,t=0,playing=false,last=0,hold=0,single=false;
+  S.forEach(function(x,i){ var b=document.createElement('button'); b.type='button'; b.innerHTML='<span class="tg2"></span><span></span>'; b.firstChild.textContent=x.tag; b.lastChild.textContent=(i+1)+'. '+x.n; b.addEventListener('click',function(){ playing=false; set(i,reduce?1:0); if(!reduce){playing=true; single=true;} sync(); }); box.appendChild(b); });
   function mode(){return modeS.value}
   function off(){return shiftC.checked?[9,-6]:[0,0]}
   var strBox=document.getElementById('howstr'), strI=document.getElementById('howstrin'), strMsg=document.getElementById('howstrmsg');
@@ -2037,7 +2037,7 @@ Y: Flowcharts("ColumnC").Variables.WellxW_ROI_Y-5</pre>
   var PX=[[387,386,376,384,379,369,365,371],[374,371,370,376,387,383,369,373],[388,391,393,386,383,372,372,368],[381,378,374,373,375,385,386,371],[375,382,385,386,385,386,368,365],[379,375,372,367,364,365,377,377],[370,378,378,374,372,371,371,360],[364,369,367,365,368,356,357,356]];
   var dispS=document.getElementById('howdisp'), RB=[322,402,104,30], SB=[452,424,172,28];
   var DEF={m:modeS.value,d:dispS.value,e:copy(exp),c:cur};
-  function stopJob(){ playing=false; modeS.value=DEF.m; dispS.value=DEF.d; shiftC.checked=false; exp=copy(DEF.e); act=copy(DEF.e); cur=DEF.c; strI.value=cur; hdr=''; preS.selectedIndex=0; modeUI(); set(0,1); }
+  function stopJob(){ single=false; playing=false; modeS.value=DEF.m; dispS.value=DEF.d; shiftC.checked=false; exp=copy(DEF.e); act=copy(DEF.e); cur=DEF.c; strI.value=cur; hdr=''; preS.selectedIndex=0; modeUI(); set(0,1); }
   function ovDraw(ox,oy){
     var mx=DX+ox, my=DY+oy, c, i, d=dispS.value;
     g.strokeStyle='#00e000'; g.lineWidth=1; g.strokeRect(177.5,334.25,251,30); line(mx-25,my,mx+25,my); line(mx,my-3,mx,my+3);
@@ -2068,13 +2068,13 @@ Y: Flowcharts("ColumnC").Variables.WellxW_ROI_Y-5</pre>
   dispS.addEventListener('change',function(){ draw(); });
   function frame(now){
     if(playing){ var dt=Math.min(60,now-last); 
-      if(t<1){ t=Math.min(1,t+dt/2600); draw(); }
+      if(t<1){ t=Math.min(1,t+dt/2600); draw(); if(t>=1&&single){ single=false; playing=false; sync(); } }
       else { hold+=dt; if(hold>900){ if(st<S.length-1){ set(st+1,0); } else { playing=false; sync(); } } } }
     last=now; requestAnimationFrame(frame);
   }
-  playB.addEventListener('click',function(){ if(!playing&&st===S.length-1&&t>=1) set(0,0); playing=!playing; if(reduce){ playing=false; set(st<S.length-1&&t>=1?st+1:st,1); } sync(); });
-  document.getElementById('howprev').addEventListener('click',function(){ playing=false; set(st-1,1); });
-  document.getElementById('hownext').addEventListener('click',function(){ playing=false; set(t<1?st:st+1,1); });
+  playB.addEventListener('click',function(){ single=false; if(!playing&&st===S.length-1&&t>=1) set(0,0); playing=!playing; if(reduce){ playing=false; set(st<S.length-1&&t>=1?st+1:st,1); } sync(); });
+  document.getElementById('howprev').addEventListener('click',function(){ single=false; playing=false; set(st-1,1); });
+  document.getElementById('hownext').addEventListener('click',function(){ single=false; playing=false; set(t<1?st:st+1,1); });
   modeS.addEventListener('change',function(){ modeUI(); sync(); draw(); });
   shiftC.addEventListener('change',function(){ sync(); draw(); });
   document.getElementById('howsend').addEventListener('click',send);
